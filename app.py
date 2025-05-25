@@ -58,7 +58,6 @@ def generate_monthly_markdown_table(year, month, events_by_date):
                     f.write("     |")
                 else:
                     if day.day < 10:
-                        print(day)
                         f.write(" ")
                     day_events = events_by_date.get(day, [])
                     if day_events:
