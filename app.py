@@ -39,7 +39,7 @@ def group_events_by_date(events):
         grouped.setdefault(date, []).append(event)
     return grouped
 
-def generate_monthly_markdown_table(year, month, events_by_date):
+def generate_monthly_micron_table(year, month, events_by_date):
     filename = os.path.join(OUTPUT_FOLDER, f"{year}-{month:02}.mu")
     os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 
@@ -61,7 +61,7 @@ def generate_monthly_markdown_table(year, month, events_by_date):
                         f.write(" ")
                     day_events = events_by_date.get(day, [])
                     if day_events:
-                        f.write(f"`F00a`_`[{day.day}`:/calendar/days/{day.day}.mu]`_`f  |")
+                        f.write(f" `F00a`_`[{day.day}`:/calendar/days/{day}.mu]`_`f  |")
                     else:
                         f.write(f" {day.day}  |")
             f.write("\n")
@@ -71,7 +71,7 @@ def generate_day_files(events_by_date):
     os.makedirs(day_folder, exist_ok=True)
 
     for date, events in events_by_date.items():
-        with open(os.path.join(day_folder, f"{date}.md"), "w", encoding="utf-8") as f:
+        with open(os.path.join(day_folder, f"{date}.mu"), "w", encoding="utf-8") as f:
             f.write(f"> Events for {date}\n\n")
             for event in events:
                 title = event.name or "Untitled Event"
@@ -80,9 +80,9 @@ def generate_day_files(events_by_date):
                 description = event.description or "No description"
 
                 f.write(f">> {title}\n")
-                f.write(f"- **Start:** {start}\n")
-                f.write(f"- **End:** {end}\n")
-                f.write(f"- **Description:**\n\n```\n{description}\n```\n\n")
+                f.write(f">>> `!Start:`! {start}\n")
+                f.write(f">>> `!End:`! {end}\n")
+                f.write(f">>> `!Description:`! \n{description}")
 
 def main():
     now = datetime.now(pytz.timezone(TIMEZONE))
@@ -96,9 +96,9 @@ def main():
     events = fetch_events(calendar_obj, start, end)
     events_by_date = group_events_by_date(events)
 
-    generate_monthly_markdown_table(year, month, events_by_date)
-    generate_monthly_markdown_table(year, month+1, events_by_date)
-    generate_monthly_markdown_table(year, month+2, events_by_date)
+    generate_monthly_micron_table(year, month, events_by_date)
+    generate_monthly_micron_table(year, month+1, events_by_date)
+    generate_monthly_micron_table(year, month+2, events_by_date)
     generate_day_files(events_by_date)
 
     print("Micron calendar generated.")
