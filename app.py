@@ -13,6 +13,7 @@ CALDAV_URL = "http://192.168.8.187:8080/remote.php/dav/public-calendars/YbrfxqBZ
 USERNAME = "your-username"
 PASSWORD = "your-password"
 TIMEZONE = "UTC"
+OUTPUT_FOLDER = "calendar"
 
 def connect_to_caldav():
     client = DAVClient(url=CALDAV_URL, username=USERNAME, password=PASSWORD)
@@ -39,8 +40,8 @@ def group_events_by_date(events):
     return grouped
 
 def generate_monthly_micron_table(year, month, events_by_date):
-    filename = os.path.join(f"{year}-{month:02}.mu")
-
+    filename = os.path.join(OUTPUT_FOLDER, f"{year}-{month:02}.mu")
+    os.makedirs(OUTPUT_FOLDER, exist_ok=True)
     with open(filename, "w", encoding="utf-8") as f:
         f.write(f"> 📅 {calendar.month_name[month]} {year}\n\n")
         f.write("| Mon | Tue | Wed | Thu | Fri | Sat | Sun |\n")
@@ -65,7 +66,7 @@ def generate_monthly_micron_table(year, month, events_by_date):
             f.write("\n")
 
 def generate_day_files(events_by_date):
-    day_folder = os.path.join("days")
+    day_folder = os.path.join(OUTPUT_FOLDER, "days")
     os.makedirs(day_folder, exist_ok=True)
 
     for date, events in events_by_date.items():
