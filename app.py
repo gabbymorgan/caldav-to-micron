@@ -39,10 +39,20 @@ def group_events_by_date(events):
         grouped.setdefault(date, []).append(event)
     return grouped
 
-def generate_monthly_micron_table(year, month, events_by_date):
-    filename = os.path.join(OUTPUT_FOLDER, f"{year}-{month:02}.mu")
-    os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+def init_index():
+    filename = os.path.join(OUTPUT_FOLDER, "index.mu")
     with open(filename, "w", encoding="utf-8") as f:
+        f.write(f"> Calendar\n")
+
+def append_month_to_index(year, month):
+    filename = os.path.join(OUTPUT_FOLDER, "index.mu")
+    with open(filename, "a", encoding="utf-8") as f:
+        f.write(f">> `F00a`_`[{year}-{month:02}`:/calendar/{year}-{month:02}.mu]`_`f\n")
+
+def generate_monthly_micron_table(year, month, events_by_date):
+    os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+    month_filename = os.path.join(OUTPUT_FOLDER, f"{year}-{month:02}.mu")
+    with open(month_filename, "w", encoding="utf-8") as f:
         f.write(f"> 📅 {calendar.month_name[month]} {year}\n\n")
         f.write("| Mon | Tue | Wed | Thu | Fri | Sat | Sun |\n")
         f.write("|-----|-----|-----|-----|-----|-----|-----|\n")
@@ -85,19 +95,33 @@ def generate_day_files(events_by_date):
 
 def main():
     now = datetime.now(pytz.timezone(TIMEZONE))
-    year = now.year
-    month = now.month
+    current_year = now.year
+    current_month = now.month
+    months = []
+    #add months for the rest of the year
+    for current_year_month in range(current_month, 13):
+        months.append(current_year_month)
+    #add months for next year
+    for next_year_month in range(1, current_month):
+        months.append(next_year_month)
 
-    start = datetime(year, month, 1, tzinfo=pytz.timezone(TIMEZONE))
+    start = datetime(current_year, current_month, 1, tzinfo=pytz.timezone(TIMEZONE))
     end = (start + timedelta(days=365)).replace(day=1)
 
     calendar_obj = connect_to_caldav()
     events = fetch_events(calendar_obj, start, end)
     events_by_date = group_events_by_date(events)
 
-    generate_monthly_micron_table(year, month, events_by_date)
-    generate_monthly_micron_table(year, month+1, events_by_date)
-    generate_monthly_micron_table(year, month+2, events_by_date)
+    init_index()
+
+    for month in months:
+        if month >=  current_month:
+            year = current_year
+        else:
+            year = current_year + 1
+        generate_monthly_micron_table(year, month, events_by_date)
+        append_month_to_index(year, month)
+
     generate_day_files(events_by_date)
 
     print("Micron calendar generated.")
@@ -105,4 +129,4 @@ def main():
 if __name__ == "__main__":
     while True:
         main()
-        time.sleep(300)
+        time.sleep(24 * 60 * 60 * 1000) # one day
