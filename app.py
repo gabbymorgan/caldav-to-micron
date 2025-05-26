@@ -13,7 +13,7 @@ CALDAV_URL = "http://192.168.8.187:8080/remote.php/dav/public-calendars/YbrfxqBZ
 USERNAME = "your-username"
 PASSWORD = "your-password"
 TIMEZONE = "UTC"
-OUTPUT_FOLDER = "micron_calendar"
+OUTPUT_FOLDER = "calendar"
 
 def connect_to_caldav():
     client = DAVClient(url=CALDAV_URL, username=USERNAME, password=PASSWORD)
