@@ -47,7 +47,7 @@ def init_index():
 def append_month_to_index(year, month):
     filename = os.path.join(OUTPUT_FOLDER, "index.mu")
     with open(filename, "a", encoding="utf-8") as f:
-        f.write(f"`F00a`_`[{year}-{month:02}`:/calendar/{year}-{month:02}.mu]`_`f\n")
+        f.write(f"`F00a`_`[{year}-{month:02}`:/page/calendar/{year}-{month:02}.mu]`_`f\n")
 
 def generate_monthly_micron_table(year, month, events_by_date):
     os.makedirs(OUTPUT_FOLDER, exist_ok=True)
@@ -70,7 +70,7 @@ def generate_monthly_micron_table(year, month, events_by_date):
                         f.write(" ")
                     day_events = events_by_date.get(day, [])
                     if day_events:
-                        f.write(f" `F00a`_`[{day.day}`:/calendar/days/{day}.mu]`_`f  |")
+                        f.write(f" `F00a`_`[{day.day}`:/page/calendar/days/{day}.mu]`_`f  |")
                     else:
                         f.write(f" {day.day}  |")
             f.write("\n")
