@@ -91,7 +91,8 @@ def generate_day_files(events_by_date):
                 f.write(f">> {title}\n")
                 f.write(f">>> `!Start:`! {start}\n")
                 f.write(f">>> `!End:`! {end}\n")
-                f.write(f">>> `!Description:`! \n{description}")
+                f.write(f">>> `!Description:`! {description}\n")
+                f.write(f">>> {description}")
 
 def main():
     now = datetime.now(pytz.timezone(TIMEZONE))
