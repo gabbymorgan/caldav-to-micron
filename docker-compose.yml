@@ -1,0 +1,14 @@
+services:
+  caldav-to-micron:
+    image: 'caldav-to-micron'
+    container_name: 'caldav-to-micron'
+    restart: 'unless-stopped'
+    volumes:
+      - ~/nomadnetwork/storage/pages/calendar:/app/calendar
+  noamdnet:
+    image: 'ghcr.io/markqvist/nomadnet:master'
+    container_name: "nomadnet"
+    restart: "unless-stopped"
+    volumes:
+      - ~/nomadnetwork:/root/.nomadnetwork
+      - ~/reticulum:/root/.reticulum
