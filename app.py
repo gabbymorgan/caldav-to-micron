@@ -125,7 +125,7 @@ def main():
 
     generate_day_files(events_by_date)
 
-d
+
 if __name__ == "__main__":
     while True:
         main()
