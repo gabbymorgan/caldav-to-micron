@@ -97,21 +97,15 @@ def generate_day_files(events_by_date):
                 f.write(f">>>> {format_event_description(description)}")
 
 def format_event_description(description_text):
-    text_list = str.split(description_text, "\n")
-    formatted_text = "\n>>>> ".join(text_list)
+    formatted_text = description_text.replace("\n", "\n>>>> ")
     return formatted_text
 
 def main():
+    init_index()
     now = datetime.now(pytz.timezone(TIMEZONE))
     current_year = now.year
     current_month = now.month
-    months = []
-    #add months for the rest of the year
-    for current_year_month in range(current_month, 13):
-        months.append(current_year_month)
-    #add months for next year
-    for next_year_month in range(1, current_month):
-        months.append(next_year_month)
+    twelve_months = [x for x in range(current_month, 13)] + [x for x in range(1, current_month)]
 
     start = datetime(current_year, current_month, 1, tzinfo=pytz.timezone(TIMEZONE))
     end = (start + timedelta(days=365)).replace(day=1)
@@ -120,9 +114,8 @@ def main():
     events = fetch_events(calendar_obj, start, end)
     events_by_date = group_events_by_date(events)
 
-    init_index()
 
-    for month in months:
+    for month in twelve_months:
         if month >=  current_month:
             year = current_year
         else:
@@ -132,8 +125,7 @@ def main():
 
     generate_day_files(events_by_date)
 
-    print("Micron calendar generated.")
-
+d
 if __name__ == "__main__":
     while True:
         main()
